@@ -1,0 +1,28 @@
+/* Home Hero 1.0 */
+.hero_section {
+  position: relative;
+  background: url("../assets/hero/hero-1.jpg") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  padding-top: 170px;
+  padding-bottom: 90px;
+}
+.hero_section .hero_text h1 {
+  font-family: var(--lilita-font);
+  font-size: 7rem;
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: 3px;
+  margin-top: 30px;
+}
+.hero_section .hero_text h2 {
+  font-family: var(--lilita-font);
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+}
+.hero_section .hero_text p {
+  padding: 0 5%;
+}
+
