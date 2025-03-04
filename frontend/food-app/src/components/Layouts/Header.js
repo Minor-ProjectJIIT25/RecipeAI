@@ -1,48 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/logo/logo.png";
 import "../../styles/HeaderStyle.css";
 
 const Header = () => {
   const [nav, setNav] = useState(false);
 
-  // Scroll Navbar
-  const changeValueOnScroll = () => {
-    const scrollValue = document?.documentElement?.scrollTop;
-    scrollValue > 100 ? setNav(true) : setNav(false);
-  };
+  useEffect(() => {
+    const changeValueOnScroll = () => {
+      const scrollValue = document?.documentElement?.scrollTop;
+      setNav(scrollValue > 100);
+    };
 
-  window.addEventListener("scroll", changeValueOnScroll);
+    window.addEventListener("scroll", changeValueOnScroll);
+    return () => window.removeEventListener("scroll", changeValueOnScroll);
+  }, []);
+
+  const styles = {
+    logo: {
+      fontSize: "1.8rem",
+      fontWeight: "bold",
+      color: nav ? "black" : "white", // Change color dynamically
+      transition: "color 0.3s ease-in-out", // Smooth transition effect
+    },
+  };
 
   return (
     <header>
       <Navbar
         collapseOnSelect
         expand="lg"
-        className={`${nav === true ? "sticky" : ""}`}
+        className={nav ? "sticky" : ""}
       >
         <Container>
           <Navbar.Brand href="#home">
-            <Link to="/" className="logo">
-              <img src={Logo} alt="Logo" className="img-fluid" />
+            <Link to="/" style={styles.logo}>
+            🍜 Savoury Sense
             </Link>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link as={Link} to="/">
-                Home
-              </Nav.Link>
-              <Nav.Link as={Link} to="/about">
-                About
-              </Nav.Link>
-              <Nav.Link as={Link} to="/blog">
-                Blog
-              </Nav.Link>
-              <Nav.Link as={Link} to="/contact">
-                Contact
-              </Nav.Link>
+              <Nav.Link as={Link} to="/">Home</Nav.Link>
+              <Nav.Link href="#about">About</Nav.Link>
+              <Nav.Link as={Link} to="/blog">Blog</Nav.Link>
+              <Nav.Link href="#contact">Contact</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

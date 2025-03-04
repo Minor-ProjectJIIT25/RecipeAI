@@ -28,6 +28,7 @@ const Section1 = () => {
         </Row>
       </Container>
     </section>
+    
   );
 };
 

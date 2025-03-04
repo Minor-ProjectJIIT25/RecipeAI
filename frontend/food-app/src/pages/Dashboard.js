@@ -1,9 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
-import animationData from "./Animation - 1740317900925.json"; // Ensure this path is correct
-import animationData2 from "./Animation - 1740318960242.json"; // Another animation for Why Choose Us
-import backgroundImg from "./OIP.jpeg"; // Ensure this is correct
+import animationData from "./Animation - 1740317900925.json"; // Ensure path is correct
+import animationData2 from "./Animation - 1740318960242.json"; // Animation for Why Choose Us
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -15,10 +14,8 @@ const Dashboard = () => {
 
   const styles = {
     dashboard: {
-      backgroundImage: `url(${backgroundImg})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      height: "100vh",
+      backgroundColor: "#121212", // Dark background for the entire page
+      minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -30,7 +27,7 @@ const Dashboard = () => {
     header: {
       width: "100%",
       padding: "20px 40px",
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      backgroundColor: "#1f1f1f", // Slightly lighter dark for header
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
@@ -65,10 +62,10 @@ const Dashboard = () => {
     contentContainer: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "center", // Centers content vertically
+      justifyContent: "center",
       width: "80%",
-      height: "80vh", // Makes sure content is centered within the screen
-      marginTop: "50px", // Creates space below the navbar
+      height: "80vh",
+      marginTop: "50px",
     },
     textSection: {
       flex: 1,
@@ -86,6 +83,7 @@ const Dashboard = () => {
     },
     paragraph: {
       fontSize: "1.2rem",
+      color: "#d3d3d3", // Light gray for readability
     },
     button: {
       backgroundColor: "#ffcc00",
@@ -112,8 +110,9 @@ const Dashboard = () => {
       justifyContent: "space-between",
       width: "80%",
       margin: "50px auto",
-      paddingTop: "50px",
-      borderTop: "2px solid white",
+      padding: "50px",
+      borderRadius: "10px",
+      color: "white",
     },
     bulletPoints: {
       fontSize: "1.2rem",
@@ -127,80 +126,59 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
-      {/* Dashboard Section */}
-      <div style={styles.dashboard}>
-        {/* Header Section */}
-        <header style={styles.header}>
-          <div style={styles.logo}>🍔 Savoury Sense</div>
-          <nav>
-            <ul style={styles.navLinks}>
-              <li>
-                <Link
-                  to="/"
-                  style={styles.navItem}
-                  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  style={styles.navItem}
-                  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
-                >
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/blog"
-                  style={styles.navItem}
-                  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  style={styles.navItem}
-                  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </header>
+    <div style={styles.dashboard}>
+      {/* Header Section */}
+      <header style={styles.header}>
+        <div style={styles.logo}>🍔 Savoury Sense</div>
+        <nav>
+          <ul style={styles.navLinks}>
+            <li>
+              <Link
+                to="/"
+                style={styles.navItem}
+                onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
+                onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/eat-by-mood"
+                style={styles.navItem}
+                onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
+                onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
+              >
+                Eat by Mood
+              </Link>
+            </li>
+            
+            
+          </ul>
+        </nav>
+      </header>
 
-        {/* First Section - Welcome Back */}
-        <div style={styles.contentContainer}>
-          {/* Left Side - Text */}
-          <div style={styles.textSection}>
-            <h1 style={styles.heading}>WELCOME BACK</h1>
-            <p style={styles.paragraph}>
-              Enjoy AI-powered recipe recommendations based on what you have!
-            </p>
-            <button
-              style={styles.button}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = styles.button.backgroundColor)}
-              onClick={handleLogout}
-            >
-              LOGOUT
-            </button>
-          </div>
+      {/* First Section - Welcome Back */}
+      <div style={styles.contentContainer}>
+        {/* Left Side - Text */}
+        <div style={styles.textSection}>
+          <h1 style={styles.heading}>WELCOME BACK</h1>
+          <p style={styles.paragraph}>
+            Enjoy AI-powered recipe recommendations based on what you have!
+          </p>
+          <button
+            style={styles.button}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = styles.button.backgroundColor)}
+            onClick={handleLogout}
+          >
+            LOGOUT
+          </button>
+        </div>
 
-          {/* Right Side - Animation */}
-          <div style={styles.animationContainer}>
-            <Lottie animationData={animationData} style={styles.lottieStyle} />
-          </div>
+        {/* Right Side - Animation */}
+        <div style={styles.animationContainer}>
+          <Lottie animationData={animationData} style={styles.lottieStyle} />
         </div>
       </div>
 
