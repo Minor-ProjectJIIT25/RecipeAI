@@ -151,6 +151,14 @@ const Dashboard = () => {
               >
                 Eat by Mood
               </Link>
+              <Link
+                to="/recipes"
+                style={styles.navItem}
+                onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
+                onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
+              >
+                Recipe for u
+              </Link>
             </li>
             
             

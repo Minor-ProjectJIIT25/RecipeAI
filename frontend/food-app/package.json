@@ -47,5 +47,9 @@
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3"
-  }
+  },
+  "main": "postcss.config.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

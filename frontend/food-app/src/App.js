@@ -15,6 +15,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ Added Dashboard Route */}
         <Route path="/eat-by-mood" element={<MoodSelector />} />
+        <Route path="/recipes" element={<RecipeList />} />
       </Routes>
     </Router>
   );
