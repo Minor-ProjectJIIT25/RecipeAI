@@ -31,7 +31,7 @@ const RecipeList = () => {
     // Handle Like and fetch recommended recipes from Flask backend (port 5000)
     const handleLike = async (recipeId) => {
         try {
-            const endpoint = `http://localhost:5000/api/recipes/${recipeId}/like`;
+            const endpoint = `http://localhost:5001/api/recipes/${recipeId}/like`;
             const response = await axios.post(endpoint);
 
             // Store recommended recipes safely

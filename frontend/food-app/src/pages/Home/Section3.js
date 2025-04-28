@@ -45,7 +45,7 @@ const Section3 = () => {
           {/* Right Side Contact Form */}
           <Col lg={7}>
             <div className="contact_text text-center text-lg-start">
-            <h1 style={{ fontSize: "2rem", fontWeight: "bold" }} className="text-warning">
+            <h1 style={{ fontSize: "2rem", fontWeight: "bold",textAlign: "left" }} className="text-warning">
   Contact Us
 </h1>
 

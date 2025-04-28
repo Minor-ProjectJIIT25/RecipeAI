@@ -3,88 +3,36 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-<<<<<<< HEAD
 const fs = require("fs");
-const csvParser = require("csv-parser");
 require("dotenv").config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-=======
-const path = require("path"); // ✅ Add this line
+const path = require("path");
 const recipeRoutes = require("./routes/recipesRoutes");
-const Recipe = require("./models/Recipe");
 
 // 🔹 MongoDB Connection
->>>>>>> c657bd0 (commit)
 const MONGO_URI = "mongodb://127.0.0.1:27017/recipeAI";
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-// ✅ Serve static images from 'Food Images' folder
-
-
-app.use("/api", recipeRoutes);
-
 // 🔹 User Schema
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
 });
-const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-const SECRET_KEY = "my_super_secret_key";
-
-// 🔹 Food-Mood Schema
-const foodSchema = new mongoose.Schema({
-  mood: String,
-  foods: [String],
-});
-const Food = mongoose.model("Food", foodSchema);
-
-// 🔹 Import CSV Data into MongoDB (Fixed)
-const importCSV = async () => {
-  try {
-    const foods = [];
-    fs.createReadStream("foods.csv")
-      .pipe(csvParser())
-      .on("data", (row) => {
-        const mood = row.mood.trim();
-        const foodItems = Object.values(row)
-          .slice(1) // Skip the first column (mood)
-          .map(f => f.trim())
-          .filter(f => f); // Remove empty values
-
-        foods.push({ mood, foods: foodItems });
-      })
-      .on("end", async () => {
-        await Food.deleteMany({});
-        await Food.insertMany(foods);
-        console.log("✅ CSV Data Imported Successfully with full food list");
-      });
-  } catch (error) {
-    console.error("❌ CSV Import Error:", error);
-  }
-};
-
-// Call importCSV() to load data on startup
-importCSV();
+const SECRET_KEY = "my_super_secret_key"; 
 
 // 🔹 Signup Route
 app.post("/api/auth/signup", async (req, res) => {
   const { email, password } = req.body;
-<<<<<<< HEAD
-=======
 
->>>>>>> c657bd0 (commit)
   const existingUser = await User.findOne({ email });
 
   if (existingUser) return res.status(400).json({ message: "User already exists" });
@@ -109,59 +57,61 @@ app.post("/api/auth/login", async (req, res) => {
   res.json({ token });
 });
 
-// 🔹 Contact Form Route
-app.post("/api/contact", (req, res) => {
-  const { name, email, message } = req.body;
-  
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  const newResponse = { name, email, message, date: new Date().toISOString() };
-
-  fs.readFile("responses.json", "utf8", (err, data) => {
-    let responses = [];
-    if (!err && data) {
-      responses = JSON.parse(data);
-    }
-
-    responses.push(newResponse);
-
-    fs.writeFile("responses.json", JSON.stringify(responses, null, 2), (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error saving response" });
-      }
-      res.json({ message: "Response saved successfully" });
-    });
-  });
+// 🔹 Recipe Schema
+const recipeSchema = new mongoose.Schema({
+  emotionType: String,
+  recipeName: String,
+  description: String,
+  ingredientsDetails: [String],
+  instructions: [String],
+  url: String,
+  imgUrl: String,
+  specialIngredient: {
+    name: String,
+    description: String,
+    source: String,
+  },
 });
+const Recipe = mongoose.models.Recipe || mongoose.model("Recipe", recipeSchema);
 
-// 🔹 Fetch Foods Based on Mood (Fixed)
-app.get("/api/foods", async (req, res) => {
-  const { mood } = req.query;
+// 🔹 Import JSON Data into MongoDB
+const importJSON = async () => {
   try {
-    const result = await Food.findOne({ mood });
+    const jsonData = JSON.parse(fs.readFileSync("newdb.json", "utf8"));
+    const recipes = jsonData.recipes.map(recipe => ({
+      emotionType: recipe.emotionType,
+      recipeName: recipe.recipeName,
+      description: recipe.description,
+      ingredientsDetails: recipe.ingredientsDetails || [],
+      instructions: recipe.instructions || [],
+      url: recipe.url,
+      imgUrl: recipe.imgUrl,
+      specialIngredient: recipe.specialIngredient || {},
+    }));
 
-    if (result) {
-      res.json({ foods: result.foods }); // ✅ Correct structure
-    } else {
-      res.json({ foods: [] }); // ✅ Prevent errors
-    }
+    await Recipe.deleteMany({});
+    await Recipe.insertMany(recipes);
+    console.log("✅ JSON Data Imported Successfully");
+  } catch (error) {
+    console.error("❌ JSON Import Error:", error);
+  }
+};
+importJSON();
+
+// 🔹 Recipe Route - Fetch Recipes Based on Mood
+// 🔹 Recipe Route - Fetch Only 6 Recipes Based on Mood
+app.get("/api/recipes", async (req, res) => {
+  const { mood } = req.query;
+
+  try {
+    const recipes = await Recipe.find({ emotionType: mood.toLowerCase() }).limit(6); // ✅ Limiting to 6 recipes
+    res.json({ recipes });
   } catch (error) {
     console.error("❌ Server error:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// 🔹 Check if Foods are Stored Correctly in MongoDB
-app.get("/api/debug/foods", async (req, res) => {
-  try {
-    const allFoods = await Food.find({});
-    res.json(allFoods);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching foods" });
-  }
-});
 
 // 🔹 Start Server
 const PORT = 5001;
