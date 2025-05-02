@@ -23,7 +23,7 @@ const teamMembers = [
   {
     name: "Divyanshi Gupta",
     role: "AI/ML Engineer",
-    image: "https://via.placeholder.com/150",
+    image: profilePic,
     linkedin: "https://linkedin.com/in/example",
     github: "https://github.com/example",
   },

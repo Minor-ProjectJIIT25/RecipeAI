@@ -21,7 +21,7 @@ const Section3 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/contact", formData); // ✅ Fixed API endpoint
+      await axios.post("http://localhost:5001/api/contact", formData); // ✅ Fixed API endpoint
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" }); // ✅ Reset form
       

@@ -1,33 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import animationData from "./Animation - 1740317900925.json"; // Ensure path is correct
 import animationData2 from "./Animation - 1740318960242.json"; // Animation for Why Choose Us
+import axios from "axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
+  const [response, setResponse] = useState("");
+  const [isChatbotVisible, setIsChatbotVisible] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
+  const toggleChatbot = () => {
+    setIsChatbotVisible(!isChatbotVisible); // Toggle chatbot visibility
+  };
+
+  const sendMessage = async () => {
+    try {
+      const res = await axios.post("/api/chatbot", { message });
+      setResponse(res.data.response);
+    } catch (error) {
+      console.error("Error sending message to chatbot:", error);
+    }
+  };
+
   const styles = {
     dashboard: {
-      backgroundColor: "#121212", // Dark background for the entire page
+      backgroundColor: "#121212",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       textAlign: "center",
       color: "white",
-      position: "relative",
       paddingBottom: "50px",
     },
     header: {
       width: "100%",
       padding: "20px 40px",
-      backgroundColor: "#1f1f1f", // Slightly lighter dark for header
+      backgroundColor: "#1f1f1f",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
@@ -65,7 +81,7 @@ const Dashboard = () => {
       justifyContent: "center",
       width: "80%",
       height: "80vh",
-      marginTop: "50px",
+      marginTop: "80px",
     },
     textSection: {
       flex: 1,
@@ -77,13 +93,13 @@ const Dashboard = () => {
       justifyContent: "center",
     },
     heading: {
-      fontSize: "4rem",
+      fontSize: "3.5rem",
       fontWeight: "bold",
       textTransform: "uppercase",
     },
     paragraph: {
       fontSize: "1.2rem",
-      color: "#d3d3d3", // Light gray for readability
+      color: "#d3d3d3",
     },
     button: {
       backgroundColor: "#ffcc00",
@@ -123,6 +139,89 @@ const Dashboard = () => {
       alignItems: "center",
       gap: "10px",
     },
+    floatingButton: {
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      padding: "15px",
+      backgroundColor: "#ff004f",
+      color: "#fff",
+      border: "none",
+      borderRadius: "50%",
+      fontSize: "24px",
+      cursor: "pointer",
+      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+      transition: "transform 0.3s ease, background-color 0.3s ease",
+      zIndex: 9999,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    chatbotContainer: {
+      position: "fixed",
+      bottom: "80px",
+      right: "20px",
+      width: "350px",
+      backgroundColor: "#ffffff",
+      borderRadius: "12px",
+      boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+      padding: "15px",
+      zIndex: 10000,
+      fontFamily: "Arial, sans-serif",
+      display: "flex",
+      flexDirection: "column",
+    },
+    chatbotHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "15px",
+    },
+    chatbotTitle: {
+      fontSize: "18px",
+      fontWeight: "bold",
+      color: "#333",
+      margin: "0",
+    },
+    closeButton: {
+      background: "none",
+      border: "none",
+      fontSize: "20px",
+      color: "#555",
+      cursor: "pointer",
+    },
+    inputContainer: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "10px",
+      marginTop: "15px",
+    },
+    input: {
+      flex: "1",
+      padding: "10px",
+      fontSize: "14px",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      outline: "none",
+      transition: "border-color 0.2s ease",
+    },
+    responseContainer: {
+      maxHeight: "200px",
+      overflowY: "auto",
+      marginTop: "10px",
+      padding: "10px",
+      backgroundColor: "#f9f9f9",
+      borderRadius: "8px",
+      borderLeft: "4px solid #ff004f",
+      fontSize: "14px",
+      color: "#333",
+    },
+    response: {
+      whiteSpace: "pre-wrap",
+      margin: "0",
+      lineHeight: "1.5",
+    },
   };
 
   return (
@@ -151,17 +250,40 @@ const Dashboard = () => {
               >
                 Eat by Mood
               </Link>
+            </li>
+            <li>
+            <Link
+  to="#"
+  style={styles.navItem}
+  onClick={() => (window.location.href = "http://localhost:8501")}
+  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
+  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
+>
+  SnapChef
+</Link>
+            </li>
+            <li>
               <Link
                 to="/recipes"
                 style={styles.navItem}
                 onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
                 onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
               >
-                Recipe for u
+                ChefAI
               </Link>
             </li>
-            
-            
+            <li>
+              
+            <Link
+  to="#"
+  style={styles.navItem}
+  onClick={() => (window.location.href = "http://localhost:3001")}
+  onMouseEnter={(e) => (e.target.style.color = styles.navItemHover.color)}
+  onMouseLeave={(e) => (e.target.style.color = styles.navItem.color)}
+>
+  Savoury Social
+</Link>
+            </li>
           </ul>
         </nav>
       </header>
@@ -209,8 +331,47 @@ const Dashboard = () => {
           </ul>
         </div>
       </div>
+
+      {/* Chatbot Floating Button */}
+      <button
+        style={styles.floatingButton}
+        onClick={toggleChatbot}
+        title="Your personal food assistant, here to help you cook!"
+      >
+        <i class="fas fa-utensils"></i>
+
+      </button>
+
+      {/* Chatbot Modal */}
+      {isChatbotVisible && (
+        <div style={styles.chatbotContainer}>
+          <div style={styles.chatbotHeader}>
+            <h2 style={styles.chatbotTitle}>Savoury Sense Assistant</h2>
+            <button style={styles.closeButton} onClick={toggleChatbot}>
+              &times;
+            </button>
+          </div>
+          <div style={styles.inputContainer}>
+            <input
+              style={styles.input}
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Ask about recipes..."
+            />
+            <button style={styles.button} onClick={sendMessage}>
+              Send
+            </button>
+          </div>
+          {response && (
+            <div style={styles.responseContainer}>
+              <p style={styles.response}><strong>Response:</strong> {response}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard;

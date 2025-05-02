@@ -1,0 +1,93 @@
+:root {
+    --card-bg: #1a1a1a;
+    --text: #ffffff;
+    --subtext: #ffffff;
+    --accent: #FFB300;
+    --accent-hover: #FFD740;
+    --radius: 8px;
+    --gap: 1rem;
+    --transition: 0.25s ease-in-out;
+  }
+  
+  .recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--gap);
+    padding: 2rem;
+  }
+  
+  .recipe-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(255, 179, 0, 0.15);
+  }
+  
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #333;
+  }
+  
+  .recipe-title {
+    color: var(--text);
+    font-size: 1.25rem;
+    margin: 0;
+  }
+  
+  .expand-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+  }
+  .expand-btn:hover {
+    background: var(--accent-hover);
+    color: #000;
+  }
+  
+  .recipe-description {
+    color: var(--subtext);
+    padding: 0 1rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .recipe-details {
+    padding: 0 1rem 1rem;
+    flex: 1;
+  }
+  
+  .recipe-section {
+    margin-bottom: 1rem;
+  }
+  
+  .recipe-section h4 {
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .ingredients-list,
+  .instructions-list {
+    padding-left: 1.25rem;
+    color: var(--subtext);
+    font-size: 0.95rem;
+  }
+  
+  .instructions-list li {
+    margin-bottom: 0.5rem;
+  }
+  

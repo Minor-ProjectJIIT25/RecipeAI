@@ -16,7 +16,7 @@ const MoodSelector = () => {
   const handleMoodClick = async (mood) => {
     setSelectedMood(mood);
     try {
-      const response = await axios.get(`http://localhost:5000/api/foods?mood=${mood}`);
+      const response = await axios.get(`http://localhost:5001/api/foods?mood=${mood}`);
       console.log("🌍 API Response:", response.data); // ✅ Check response
       setFoods(response.data.foods || []); // ✅ Fix: Extract `foods` array correctly
     } catch (error) {
