@@ -19,7 +19,7 @@ const Section2 = () => {
           </Col>
           <Col lg={7}>
             <div className="about_text text-center text-lg-start">
-              <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>About Us</h1>
+              <h1 style={{ fontSize: "2rem", fontWeight: "bold",textAlign: "left" }}>About Us</h1>
               <h2 className="text-warning" style={{ fontSize: "2rem" }}>
                 Bringing Recipes to Your Fingertips
               </h2>
