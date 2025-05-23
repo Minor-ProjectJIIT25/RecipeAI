@@ -1,23 +1,4 @@
 import React, { useState } from "react";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const ChatbotButton = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
