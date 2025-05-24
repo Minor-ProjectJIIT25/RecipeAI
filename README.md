@@ -1,4 +1,4 @@
-# 🍜 Savoury Sense – AI-Powered Culinary Web Application
+![Screenshot 2025-05-24 153308](https://github.com/user-attachments/assets/3521f07a-919d-4bcd-82f9-771ce6ae1da4)# 🍜 Savoury Sense – AI-Powered Culinary Web Application
 
 **Savoury Sense** is an intelligent, AI-driven culinary platform designed to elevate home cooking through **real-time recipe generation**, **mood-based meal suggestions**, and **community interaction**.
 
@@ -78,6 +78,12 @@ A built-in community space where users can **post**, **like**, and **comment** o
 ![Screenshot 2025-05-04 194006](https://github.com/user-attachments/assets/fe95cdb8-6bda-4738-b802-91d3b2015f52)
 ![Screenshot 2025-05-04 194219](https://github.com/user-attachments/assets/d1a82150-b712-48cb-9a7b-6fbc8348d5e3)
 ![Screenshot 2025-05-04 194240](https://github.com/user-attachments/assets/546ad98c-32b7-464f-8931-7f0d84c7cac6)
+![Screenshot 2025-05-24 153358](https://github.com/user-attachments/assets/a680316c-01eb-4a39-82ac-24768f82e2e4)
+![Screenshot 2025-05-24 153413](https://github.com/user-attachments/assets/5dc38cc8-023b-4c0d-8a07-98e91e2ebaec)
+![Screenshot 2025-05-24 153448](https://github.com/user-attachments/assets/115745ed-d33a-4490-8d4a-1455c21e1c5f)
+![Screenshot 2025-05-24 153505](https://github.com/user-attachments/assets/c7c23729-f01d-4754-9ca1-abae0853aec5)
+![Screenshot 2025-05-24 153538](https://github.com/user-attachments/assets/0c3bc0a7-ad4d-45dc-8d73-67d05797619e)
+
 
 
 
