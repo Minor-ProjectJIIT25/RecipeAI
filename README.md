@@ -91,7 +91,8 @@ A built-in community space where users can **post**, **like**, and **comment** o
 
 
 ---
-
+### Login credintials (Demo)
+Email: admin123@gmail.com Password: password
 ## 📦 Installation Guide
 
 ```bash
