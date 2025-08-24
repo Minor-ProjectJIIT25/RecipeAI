@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
+// src/MoodSelector.js
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import * as faceapi from "face-api.js";
 
 const moods = [
   { name: "Stressed", emoji: "😫", caption: "Feeling overwhelmed? Let's calm your cravings!" },
@@ -10,6 +12,7 @@ const moods = [
 ];
 
 const MoodSelector = () => {
+  // existing states
   const [selectedMood, setSelectedMood] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipeIndex, setSelectedRecipeIndex] = useState(null);
@@ -17,17 +20,34 @@ const MoodSelector = () => {
   const synthRef = useRef(window.speechSynthesis);
   const utteranceRef = useRef(null);
 
+  // camera / detection state
+  const videoRef = useRef(null);
+  const detectionIntervalRef = useRef(null);
+  const [cameraRunning, setCameraRunning] = useState(false);
+  const [detectedLabel, setDetectedLabel] = useState(null);
+  // stability buffer: require consecutiveCount threshold
+  const lastDetectedRef = useRef({ label: null, count: 0 });
+  const CONSECUTIVE_THRESHOLD = 3; // require 3 identical detections before accepting
+
+  // mapping face-api expressions to your mood names
+  const expressionToMood = {
+    happy: "Happy",
+    sad: "Sad",
+    angry: "Anger",
+    fearful: "Anxious",
+    disgusted: "Anger",
+    surprised: "Happy",
+    neutral: "Stressed",
+  };
+
+  // ------------- API fetch for mood (keeps your existing logic) -------------
   const handleMoodClick = async (mood) => {
     setSelectedMood(mood);
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`http://localhost:5001/api/foods?mood=${mood}`);
-      console.log("🌍 API Response:", response.data); // ✅ Check response
-      setFoods(response.data.foods || []); // ✅ Fix: Extract `foods` array correctly
-=======
       const response = await axios.get(`http://localhost:5001/api/recipes?mood=${mood}`);
+      console.log("🌍 API Response:", response.data);
       setRecipes(response.data.recipes || []);
->>>>>>> df2df7dcf1ffda7b57381698fb33bc9b25d934cd
+      setSelectedRecipeIndex(null);
     } catch (error) {
       console.error("❌ Error fetching recipe data:", error);
       setRecipes([]);
@@ -41,6 +61,7 @@ const MoodSelector = () => {
     }, 100);
   };
 
+  // ------------- Text-to-speech (kept as-is) -------------
   const speakRecipe = (recipe, lang) => {
     stopSpeech(); // Stop any previous speech
     const text =
@@ -54,21 +75,144 @@ const MoodSelector = () => {
 
     utteranceRef.current = new SpeechSynthesisUtterance(text);
     utteranceRef.current.lang = lang;
-    utteranceRef.current.voice = synthRef.current
-      .getVoices()
-      .find((v) => v.lang === lang);
+    // pick a voice that matches lang if available
+    const voices = synthRef.current.getVoices();
+    utteranceRef.current.voice = voices.find((v) => v.lang === lang) || null;
     synthRef.current.speak(utteranceRef.current);
   };
 
   const stopSpeech = () => {
-    if (synthRef.current.speaking) {
-      synthRef.current.cancel();
+    if (synthRef.current.speaking) synthRef.current.cancel();
+  };
+
+  // ------------- face-api model loading -------------
+  useEffect(() => {
+    const MODEL_URL = process.env.PUBLIC_URL + "/models";
+    let mounted = true;
+
+    const load = async () => {
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+        // optional: small console feedback
+        if (mounted) console.log("✅ face-api models loaded from", MODEL_URL);
+      } catch (err) {
+        console.error("❌ Error loading face-api models:", err);
+      }
+    };
+    load();
+
+    return () => {
+      mounted = false;
+      stopCamera();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ------------- camera control -------------
+  const startCamera = async () => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera not supported in this browser.");
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+      setCameraRunning(true);
+      // detection loop
+      detectionIntervalRef.current = setInterval(detectExpression, 800); // ~0.8s
+    } catch (err) {
+      console.error("❌ Camera start error:", err);
+      alert("Camera access failed. Check permissions.");
     }
   };
 
+  const stopCamera = () => {
+    setCameraRunning(false);
+    clearInterval(detectionIntervalRef.current);
+    detectionIntervalRef.current = null;
+    lastDetectedRef.current = { label: null, count: 0 };
+    setDetectedLabel(null);
+    if (videoRef.current && videoRef.current.srcObject) {
+      videoRef.current.srcObject.getTracks().forEach((t) => t.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  // ------------- detection & stable mapping -------------
+  const detectExpression = async () => {
+    if (!videoRef.current) return;
+    try {
+      const detection = await faceapi
+        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.5 }))
+        .withFaceExpressions();
+
+      if (detection && detection.expressions) {
+        const expressions = detection.expressions;
+        const top = Object.keys(expressions).reduce((a, b) => (expressions[a] > expressions[b] ? a : b));
+        const mappedMood = expressionToMood[top] || "Stressed";
+
+        // stability: require CONSECUTIVE_THRESHOLD same labels before we accept
+        const last = lastDetectedRef.current;
+        if (last.label === mappedMood) {
+          last.count += 1;
+        } else {
+          last.label = mappedMood;
+          last.count = 1;
+        }
+
+        setDetectedLabel(mappedMood);
+
+        if (last.count >= CONSECUTIVE_THRESHOLD) {
+          // only trigger if mood actually changed (avoids repeated API calls)
+          if (mappedMood !== selectedMood) {
+            setSelectedMood(mappedMood);
+            handleMoodClick(mappedMood);
+          }
+          // reset count so we don't re-trigger constantly
+          lastDetectedRef.current = { label: mappedMood, count: 0 };
+        }
+      } else {
+        // no face: optional - clear detected label
+        // setDetectedLabel(null);
+      }
+    } catch (err) {
+      console.error("❌ Detection error:", err);
+    }
+  };
+
+  // ------------- rendering UI -------------
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Select Your Mood</h2>
+
+      {/* Camera block (inline) */}
+      <div style={{ marginBottom: 12, textAlign: "center" }}>
+        <video
+          ref={videoRef}
+          width={260}
+          height={200}
+          style={{ borderRadius: 8, transform: "scaleX(-1)", border: "1px solid #ddd" }}
+          muted
+        />
+        <div style={{ marginTop: 8 }}>
+          {!cameraRunning ? (
+            <button onClick={startCamera} style={styles.voiceBtn}>
+              🎥 Start Camera Mood Detect
+            </button>
+          ) : (
+            <button onClick={stopCamera} style={styles.voiceBtn}>
+              ⛔ Stop Camera
+            </button>
+          )}
+        </div>
+        <div style={{ marginTop: 8, color: "#555" }}>
+          Detected (stable): <strong>{detectedLabel || "—"}</strong>
+        </div>
+      </div>
+
+      {/* Manual mood cards */}
       <div style={styles.moods}>
         {moods.map((mood) => (
           <div
@@ -77,7 +221,11 @@ const MoodSelector = () => {
               ...styles.moodCard,
               ...(selectedMood === mood.name ? styles.moodCardActive : {}),
             }}
-            onClick={() => handleMoodClick(mood.name)}
+            onClick={() => {
+              // manual override
+              setSelectedMood(mood.name);
+              handleMoodClick(mood.name);
+            }}
           >
             <div style={styles.emoji}>{mood.emoji}</div>
             <div style={styles.moodName}>{mood.name}</div>
@@ -91,45 +239,24 @@ const MoodSelector = () => {
           <h3 style={styles.subtitle}>Recommended Recipes: </h3>
           <div style={styles.recipeGrid}>
             {recipes.map((recipe, index) => (
-              <div
-                key={index}
-                style={styles.recipeCard}
-                onClick={() => handleRecipeClick(index)}
-              >
+              <div key={index} style={styles.recipeCard} onClick={() => handleRecipeClick(index)}>
                 <div style={styles.imageContainer}>
-                  <img
-                    src={recipe.imgUrl}
-                    alt={recipe.recipeName}
-                    style={styles.image}
-                  />
+                  <img src={recipe.imgUrl} alt={recipe.recipeName} style={styles.image} />
                 </div>
                 <h4 style={styles.recipeName}>{recipe.recipeName}</h4>
               </div>
             ))}
           </div>
 
-          {selectedRecipeIndex !== null && (
-            <div
-              ref={(el) => (recipeRefs.current[selectedRecipeIndex] = el)}
-              style={styles.recipeDetails}
-            >
+          {selectedRecipeIndex !== null && recipes[selectedRecipeIndex] && (
+            <div ref={(el) => (recipeRefs.current[selectedRecipeIndex] = el)} style={styles.recipeDetails}>
               <div style={styles.recipeText}>
                 <h4>{recipes[selectedRecipeIndex].recipeName}</h4>
                 <div style={styles.controls}>
-                  <button
-                    style={styles.voiceBtn}
-                    onClick={() =>
-                      speakRecipe(recipes[selectedRecipeIndex], "en-US")
-                    }
-                  >
+                  <button style={styles.voiceBtn} onClick={() => speakRecipe(recipes[selectedRecipeIndex], "en-US")}>
                     🔊 English
                   </button>
-                  <button
-                    style={styles.voiceBtn}
-                    onClick={() =>
-                      speakRecipe(recipes[selectedRecipeIndex], "hi-IN")
-                    }
-                  >
+                  <button style={styles.voiceBtn} onClick={() => speakRecipe(recipes[selectedRecipeIndex], "hi-IN")}>
                     🇮🇳 Hindi
                   </button>
                   <button style={styles.voiceBtn} onClick={stopSpeech}>
@@ -165,6 +292,7 @@ const MoodSelector = () => {
   );
 };
 
+// -------- existing styles (kept the same) --------
 const styles = {
   container: {
     textAlign: "center",
