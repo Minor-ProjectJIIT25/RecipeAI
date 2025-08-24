@@ -14,8 +14,28 @@ Generates dynamic recipes based on the user’s available ingredients using a **
 
 ### 😋 Eat by Mood
 
-Suggests recipes based on the user's selected **emotional state** (e.g., happy, sad, stressed) using  mapping of moods to comfort foods and feel-good meals.
-Users can also click  button to hear the recipe in English or Hindi for hands-free cooking.
+Get recipe ideas that match how you feel — automatically or manually.
+
+Auto mood detection (camera): Turn on your webcam with “🎥 Start Camera Mood Detect” and we’ll infer your mood using on-device face-api.js (no uploads). We apply a short stability check so your mood only changes after a few consistent detections.
+
+Expressions → Moods: happy → Happy, sad → Sad, angry/disgusted → Anger, fearful → Anxious, surprised → Happy, neutral → Stressed.
+
+Manual selection: Prefer to choose? Tap a mood card like Happy 😄, Sad 😢, Stressed 😫, Anger 😡, or Anxious 😰 to fetch recipes.
+
+Smart recommendations: For the current mood, the app calls your backend
+GET http://localhost:5001/api/recipes?mood=<Mood>
+and shows a clean grid of recipe cards with images.
+
+Detailed view: Click any recipe to see its description, ingredients, and step-by-step instructions.
+
+Hands-free cooking: Listen to the recipe with built-in text-to-speech — English (🔊) or Hindi (🇮🇳) — and a one-tap Stop button.
+
+Smooth UX touches: Auto-scroll to the opened recipe, mirrored camera preview, and subtle highlights for the selected mood.
+
+Setup notes
+• Place face-api models in public/models (loaded from process.env.PUBLIC_URL + "/models").
+• Backend should return { recipes: [...] } with fields: recipeName, description, ingredientsDetails[], instructions[], imgUrl.
+• Camera access is optional — manual mood selection works without it.
 
 ### 🗣️ Cook Alike
 
